@@ -31,76 +31,91 @@ public  class md5 {
 		for (int i = 0; i < md5Bytes.length; i++){
 			int val = ((int) md5Bytes[i]) & 0xff;
 			if (val < 16)
-				hexValue.append("0");
+			hexValue.append("0");
 			hexValue.append(Integer.toHexString(val));
 		}
 		return hexValue.toString();
-	}
-	
 
-	// main function
-	public static void main(String args[]) throws Exception {
-//		String s = new String("wilsonact");
+	}
+     
+	
+	// 测试主函数
+	public static void main(String[] args) throws Exception {
+//		String s = new String("miaorunsheng");
 //		System.out.println("原始：" + s);
 //		System.out.println("MD5后：" + string2MD5(s));
 //		String finpath = args[0];
 //		 String foutpath = args[1];
 
-		File f = new File("C:/data/source.txt");
-    File fout = new File("C:/data/result.txt");
-    fout.createNewFile();
+//		File f = new File(finpath);
+//        	File fout = new File(foutpath);
+		
+//		"C:/Users/uatrm990204/Desktop/GPS/data/testdata0809/trans_table_with_id_m7_0809.txt",
+//		"C:/Users/uatrm990204/Desktop/GPS/data/testdata0809/output_0809_gps.txt"
+		String inpath = args[0];
+		String outpath = args[1];
+		//String example: 2-3-11
+		String lnum = args[2];
+		String head = args[3];
+		
+		String[] lnlist = null;
+		lnlist = lnum.split("-");
+		int listlen = lnlist.length;
+
+		File f = new File(inpath);
+        	File fout = new File(outpath);
+        	fout.createNewFile();
         		
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		FileWriter fileWritter = new FileWriter(fout,true);
-    BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+        	BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
         
-        String str = "";
+	 	String str = "";
+		String str1 = "";
 		String[] strs = null;
 		StringBuffer strbuf = new StringBuffer(); 
 		
-		str = br.readLine();
-		strs = str.split(",");
-		for(int i = 0; i < strs.length; i++)  {
-				strbuf.append(",").append(strs[i]);  
+		//deal with the header
+		if(head == "Y"){
+		str = br.readLine();	
+		bufferWritter.write(str);
+//        	System.out.println(str1);
+        	bufferWritter.write("\n");
 		}
 		
-//	System.out.println(strbuf); 
-		String str1 = strbuf.deleteCharAt(0).toString();
-		bufferWritter.write(str1);
-//  System.out.println(str1);
-    bufferWritter.write("\n");
-		
 		int j = 0;
-		while ((str = br.readLine()) != null && j<5 ) {
-			System.out.println(str);
-			strs = str.split("|");
-			System.out.println(strs[0]);
+		while ((str = br.readLine()) != null ) {
+//			System.out.println(str);
+			strs = str.split(",");
+//			System.out.println(strs[0]);
 			
-			strs[0] = string2MD5(strs[0]);
-			String a = strs[8];
-			a = URLEncoder.encode(a, "GBK");
-			a = URLDecoder.decode(a, "UTF-8");
-			System.out.println(strs[10]);
-			strs[8] = a;
-			 
+			//do md5
+			for(int k = 0; k < listlen; k++){
+				int l = Integer.parseInt(lnlist[k]);
+				strs[l-1] = string2MD5(strs[l-1]);
+			}		
+				
+			// clear buff
 			strbuf.delete(0,strbuf.length());
 			for(int i = 0; i < strs.length; i++)  {
-					strbuf.append(",").append(strs[i]);  
-			}
 			
-//		System.out.println(strbuf); 
+			    strbuf.append(",").append(strs[i]);  
+			
+			}
+//			System.out.println(strbuf); 
 			str1 = strbuf.deleteCharAt(0).toString();  
 			
 			j = j+1;
-//		System.out.println(j); 
+//			System.out.println(j); 
 			
-      bufferWritter.write(str1);
-//    System.out.println(str1);
-      bufferWritter.write("\n");
+            bufferWritter.write(str1);
+//          System.out.println(str1);
+            bufferWritter.write("\n");
 
-	  }
-		br.close();
-    bufferWritter.close();
 	}
+	br.close();
+        bufferWritter.close();
+	}
+        
 	
 }
