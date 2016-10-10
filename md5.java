@@ -67,8 +67,7 @@ public  class md5 {
         	fout.createNewFile();
         		
 		BufferedReader br = new BufferedReader(new FileReader(f));
-		FileWriter fileWritter = new FileWriter(fout,true);
-        	BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+        	BufferedWriter bufferWritter = new BufferedWriter(new FileWriter(fout,false));
         
 	 	String str = "";
 		String str1 = "";
